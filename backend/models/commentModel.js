@@ -19,6 +19,11 @@ const commentSchema = mongoose.Schema(
             type: Date,
             required: true,
             default: Date.now
+        },
+        commentStatus:{
+            type: String,
+            default: "Active",
+            required: true
         }
     }
 );

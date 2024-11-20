@@ -5,14 +5,19 @@ const reportSchema = mongoose.Schema(
         articleID:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Article',
-            required: true
+            required: false
+        },
+        commentID:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment',
+            required: false
         },
         userID:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
-        reportTag:{
+        reportType:{
             type: String,
             required: false
         },

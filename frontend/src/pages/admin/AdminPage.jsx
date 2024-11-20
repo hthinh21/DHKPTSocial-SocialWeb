@@ -51,7 +51,7 @@ const AdminPage = () => {
     <>
     <Navbar />
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl my-8 text-center w-full" >List Users</h1>
+        <h1 className="text-3xl my-8 text-center w-full" >Quản lý người dùng</h1>
         <Link to="/register">
           <MdOutlineAddBox className="text-sky-800 text-4xl" />
         </Link>

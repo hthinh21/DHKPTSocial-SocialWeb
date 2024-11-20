@@ -1,5 +1,6 @@
 import express from 'express';
 import { Comment } from '../models/commentModel.js';
+import { Report } from '../models/reportModel.js';
 const router = express.Router();
 
 //Route for creating a comment
@@ -29,12 +30,29 @@ router.post('/', async (request, response) => {
       response.status(500).send({ message: error.message });
     }
   });
+  router.put('/:id', async (request, response) => {
+    try {
+      const { id } = request.params;
+  
+      const result = await Comment.findByIdAndUpdate(id, request.body);
+  
+      if (!result) {
+        return response.status(404).json({ message: 'Comment not found' });
+      }
+  
+      return response.status(200).send({ message: 'Comment updated successfully' });
+    } catch (error) {
+        console.log(error.message);
+        response.status(500).send({ message: error.message });
+    }
+  });
 //Route for deleting a comment
 router.delete('/:id', async (request, response) => {
     try {
       const { id } = request.params;
   
       const result = await Comment.findByIdAndDelete(id);
+      const reportcmt = await Report.deleteMany({ commentID: id });
   
       if (!result) {
         return response.status(404).json({ message: 'Comment not found' });
@@ -50,10 +68,16 @@ router.get('/:articleID', async (request, response) => {
   try {
     const { articleID } = request.params;
 
-    const result = await Comment.find({articleID: articleID}).populate('userID').sort({ publishDate: -1 });
+    const result = await Comment.find({
+      articleID: articleID,
+      commentStatus: { $in: ["Active", "Reported"] } // Điều kiện lọc trạng thái
+    })
+    .populate('userID')
+    .sort({ publishDate: -1 });
     if (!result) {
       return response.status(404).json({ message: 'Comments not found' });
     }
+    
     return response.status(200).send({
       count: result.length,
       data: result,

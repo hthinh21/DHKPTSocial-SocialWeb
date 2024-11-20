@@ -13,7 +13,7 @@ const articleSchema = mongoose.Schema(
         },
         articleStatus:{
             type: String,
-            default: "active",
+            default: "Active",
             required: true
         },
         numberOfComment:{

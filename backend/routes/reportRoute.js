@@ -6,7 +6,6 @@ const router = express.Router();
 router.post('/', async (request, response) => {
     try {
       if (
-        !request.body.postID ||
         !request.body.userID ||
         !request.body.reportDetails
       ) {
@@ -14,11 +13,23 @@ router.post('/', async (request, response) => {
           message: 'Send all required fields: article, user, report detail',
         });
       }
-      else{
+      else if(request.body.postID){
         const newReport = {
-            articleID: request.body.postID,
+          articleID: request.body.postID,
+          userID: request.body.userID,
+          reportDetail: request.body.reportDetails,
+          reportType: request.body.reportType
+        };
+        const report = await Report.create(newReport);
+
+        return response.status(201).send(report);
+      }
+      else if(request.body.commentID){
+        const newReport = {
+            commentID: request.body.commentID,
             userID: request.body.userID,
-            reportDetail: request.body.reportDetails
+            reportDetail: request.body.reportDetails,
+            reportType: request.body.reportType
           };
           const report = await Report.create(newReport);
 
@@ -91,6 +102,22 @@ router.post('/', async (request, response) => {
     try {
       const result = await Report.findOne({ articleID, userID })
         .populate('articleID')
+        .populate('userID');
+  
+      if (!result) {
+        return response.status(404).json({ message: 'Report not found' });
+      }
+  
+      return response.status(200).json(result);
+    } catch (error) {
+      return response.status(500).json({ error: 'Internal Server Error' });
+    }
+  })
+  router.get('/comment/:userID/:commentID', async (request, response) => {
+    const {userID, commentID} = request.params;
+    try {
+      const result = await Report.findOne({ commentID, userID })
+        .populate('commentID')
         .populate('userID');
   
       if (!result) {
